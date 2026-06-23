@@ -1,3 +1,4 @@
+const DEFAULT_BACKEND_ORIGIN = "https://solarpulse-backend-production-1dde.up.railway.app";
 const DEFAULT_TIMEOUT_MS = 60000;
 const ALLOWED_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
 
@@ -38,14 +39,7 @@ export default {
     return new Response(null, { status: 204 });
   }
 
-  const backendOrigin = normalizeOrigin(process.env.BACKEND_API_ORIGIN);
-
-  if (!backendOrigin) {
-    return Response.json(
-      { detail: "Missing BACKEND_API_ORIGIN environment variable on Vercel." },
-      { status: 500 },
-    );
-  }
+  const backendOrigin = normalizeOrigin(process.env.BACKEND_API_ORIGIN || DEFAULT_BACKEND_ORIGIN);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), Number(process.env.PROXY_TIMEOUT_MS || DEFAULT_TIMEOUT_MS));
