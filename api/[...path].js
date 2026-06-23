@@ -20,8 +20,7 @@ async function readRequestBody(request) {
   return Buffer.from(await request.arrayBuffer());
 }
 
-export default {
-  async fetch(request) {
+export default async function handler(request) {
   if (!ALLOWED_METHODS.includes(request.method)) {
     return Response.json(
       { detail: "Method Not Allowed" },
@@ -48,7 +47,10 @@ export default {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), Number(process.env.PROXY_TIMEOUT_MS || DEFAULT_TIMEOUT_MS));
+  const timeout = setTimeout(
+    () => controller.abort(),
+    Number(process.env.PROXY_TIMEOUT_MS || DEFAULT_TIMEOUT_MS),
+  );
 
   try {
     const targetUrl = buildTargetUrl(request, backendOrigin);
@@ -85,5 +87,4 @@ export default {
   } finally {
     clearTimeout(timeout);
   }
-  },
-};
+}
